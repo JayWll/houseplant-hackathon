@@ -85,7 +85,11 @@ app.get('/getdata', (req, res) => {
   })
 */
   
-  
+  Readings.findAll({
+    attributes: ['timestamp', 'reading']
+  }).then((result) => {
+    res.status(200).send(result).end();
+  })
 });
 
 
