@@ -2,8 +2,60 @@
 // where your node app starts
 
 // init project
-const express = require("express");
-const app = express();
+var express = require('express');
+var Sequelize = require('sequelize');
+var app = express();
+
+// setup a new database
+// using database credentials set in .env
+var sequelize = new Sequelize('database', process.env.DB_USER, process.env.DB_PASS, {
+  host: '0.0.0.0',
+  dialect: 'sqlite',
+  pool: {
+    max: 5,
+    min: 0,
+    idle: 10000
+  },
+    // Security note: the database is saved to the file `database.sqlite` on the local filesystem. It's deliberately placed in the `.data` directory
+    // which doesn't get copied if someone remixes the project.
+  storage: '.data/database.sqlite'
+});
+var Readings;
+
+// authenticate with the database
+sequelize.authenticate()
+  .then(function(err) {
+    console.log('Connection has been established successfully.');
+    // define a new table 'readings'
+    Readings = sequelize.define('readings', {
+      timestamp: {
+        type: Sequelize.DATE
+      },
+      reading: {
+        type: Sequelize.INTEGER
+      }
+    });
+  
+    setup();
+  })
+  .catch(function (err) {
+    console.log('Unable to connect to the database: ', err);
+  });
+
+// populate table with default users
+function setup(){
+  Readings.sync({force: true}).then(function() {
+    console.log(Readings);
+  });
+  
+  User.sync({force: true}) // We use 'force: true' in this example to drop the table users if it already exists, and create a new one. You'll most likely want to remove this setting in your own apps
+    .then(function(){
+      // Add the default users to the database
+      for(var i=0; i<users.length; i++){ // loop through all users
+        User.create({ firstName: users[i][0], lastName: users[i][1]}); // create a new entry in the users table
+      }
+    });  
+}
 
 // we've started you off with Express,
 // but feel free to use whatever libs or frameworks you'd like through `package.json`.
