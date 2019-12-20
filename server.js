@@ -4,6 +4,7 @@
 // init project
 var express = require('express');
 var Sequelize = require('sequelize');
+const Op = Sequelize.Op
 var request = require('request');      // TEMPORARY! Used for import function.
 var app = express();
 
@@ -65,12 +66,27 @@ app.get('/newreading', (req, res) => {
 app.get('/getdata', (req, res) => {
   const iso8601 = /^([\+-]?\d{4}(?!\d{2}\b))((-?)((0[1-9]|1[0-2])(\3([12]\d|0[1-9]|3[01]))?|W([0-4]\d|5[0-2])(-?[1-7])?|(00[1-9]|0[1-9]\d|[12]\d{2}|3([0-5]\d|6[1-6])))([T\s]((([01]\d|2[0-3])((:?)[0-5]\d)?|24\:?00)([\.,]\d+(?!:))?)?(\17[0-5]\d([\.,]\d+)?)?([zZ]|([\+-])([01]\d|2[0-3]):?([0-5]\d)?)?)?)?$/
 
-/*
   if (!req.query.from || !req.query.to || !RegExp(iso8601).test(req.query.from) || !RegExp(iso8601).test(req.query.to)) {
     res.status(400).send('Bad Request').end();
     return;
   }
+  
+  Readings.findAll({
+    attributes: ['timestamp', 'reading'],
+    where: {
+      timestamp: {
+        [Op.between]: [new Date(req.query.from), new Date(req.query.to)]
+      }
+    },
+    order: [
+      ['timestamp', 'DESC']
+    ]
+  }).then((result) => {
+    res.status(200).send(result).end();
+  })
+});
 
+/*
   const query = datastore
     .createQuery('entry')
     .filter('timestamp', '>=', new Date(req.query.from))
@@ -83,20 +99,27 @@ app.get('/getdata', (req, res) => {
       .send(ent)
       .end()
   })
-*/
+
+  var fromDate = new Date('2019-12-01T00:00:00.000Z')
+  //return res.status(200).send(fromDate).end();
   
   Readings.findAll({
     attributes: ['timestamp', 'reading'],
+    where: {
+      timestamp: {
+        [Op.lte]: fromDate
+      }
+    },
     order: [
       ['timestamp', 'DESC']
     ]
   }).then((result) => {
     res.status(200).send(result).end();
   })
-});
+});*/
 
 
-// <TEMP>
+/*
 app.get('/import', (req, res) => {
   request({ url: 'https://www.jasonsplant.ml/extract', json: true }, (error, {body}) => {
     if (error) return;
@@ -125,7 +148,7 @@ app.get('/reset', (req, res) => {
   Readings.sync({ force: true });
   res.status(200).send('OK').end();
 })
-// </TEMP>
+*/
 
 // listen for requests :)
 const listener = app.listen(process.env.PORT, function() {
