@@ -45,16 +45,9 @@ sequelize.authenticate()
 // populate table with default users
 function setup(){
   Readings.sync({force: true}).then(function() {
+    Readings.create({ timestamp: new Date(), reading: 30 });
     console.log(Readings);
-  });
-  
-  User.sync({force: true}) // We use 'force: true' in this example to drop the table users if it already exists, and create a new one. You'll most likely want to remove this setting in your own apps
-    .then(function(){
-      // Add the default users to the database
-      for(var i=0; i<users.length; i++){ // loop through all users
-        User.create({ firstName: users[i][0], lastName: users[i][1]}); // create a new entry in the users table
-      }
-    });  
+  });  
 }
 
 // we've started you off with Express,
@@ -68,7 +61,18 @@ app.get("/", function(request, response) {
   response.sendFile(__dirname + "/views/index.html");
 });
 
+app.get("/data", function (request, response) {
+  var result = [];
+  Readings.findAll().then(function(reading) { // find all entries in the users tables
+    reading.forEach(function(reading) {
+      result.push([reading.timestamp, reading.reading]); // adds their info to the dbUsers value
+    });
+    response.send(result); // sends dbUsers back to the page
+  });
+});
+
 app.get("/newreading", function(request, response) {
+  Readings.create({ timestamp: new Date(), reading: 30 });
   response.status(200).send('GlitchApp Success').end();
 });
 
