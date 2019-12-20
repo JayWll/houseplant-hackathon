@@ -1,15 +1,11 @@
-// server.js
-// where your node app starts
-
-// init project
-var express = require('express');
-var Sequelize = require('sequelize');
+// Initialize project
+const express = require('express');
+const Sequelize = require('sequelize');
 const Op = Sequelize.Op
-var request = require('request');      // TEMPORARY! Used for import function.
-var app = express();
+//const request = require('request');      // TEMPORARY! Used for import function.
+const app = express();
 
-// setup a new database
-// using database credentials set in .env
+// Setup database, using credentials set in .env
 var sequelize = new Sequelize('database', process.env.DB_USER, process.env.DB_PASS, {
   host: '0.0.0.0',
   dialect: 'sqlite',
@@ -24,12 +20,12 @@ var sequelize = new Sequelize('database', process.env.DB_USER, process.env.DB_PA
 });
 var Readings;
 
-// authenticate with the database
+// Authenticate with the database
 sequelize.authenticate()
   .then(function(err) {
     console.log('Connection has been established successfully.');
 
-    // define a new table 'readings'
+    // Define 'readings' table structure
     Readings = sequelize.define('readings', {
       timestamp: {
         type: Sequelize.DATE
@@ -39,21 +35,19 @@ sequelize.authenticate()
       }
     });
   
+    // Read data
     Readings.sync();
   })
   .catch(function (err) {
     console.log('Unable to connect to the database: ', err);
   });
 
-// we've started you off with Express,
-// but feel free to use whatever libs or frameworks you'd like through `package.json`.
-
-// http://expressjs.com/en/starter/basic-routing.html
+// Handle requests for the root page by serving the static index.html from the views folder
 app.get("/", function(req, res) {
   res.sendFile(__dirname + "/views/index.html");
 });
 
-// Handle requests to post a new reading
+// Handle requests to /newreading by posting a new reading to the database
 app.get('/newreading', (req, res) => {
   // Filter out requests that don't include the secret key, or don't contain the required data
   if (req.query.s != process.env.SECRET || !RegExp('^\\d*$').test(req.query.v)) return res.status(400).send('Bad Request').end();
@@ -86,38 +80,26 @@ app.get('/getdata', (req, res) => {
   })
 });
 
-/*
-  const query = datastore
-    .createQuery('entry')
-    .filter('timestamp', '>=', new Date(req.query.from))
-    .filter('timestamp', '<', new Date(req.query.to))
-    .order('timestamp', { descending: true });
-
-  datastore.runQuery(query, function(err, ent) {
-    res
-      .status(200)
-      .send(ent)
-      .end()
-  })
-
-  var fromDate = new Date('2019-12-01T00:00:00.000Z')
-  //return res.status(200).send(fromDate).end();
+// Handle requests to /cleanup by deleting any data older than 90 days from the datastore
+app.get('/cleanup', (req, res) => {
+  // SECURITY CHECK FOR THE CORRECT CRONJOB HEADER GOES HERE!!
   
-  Readings.findAll({
-    attributes: ['timestamp', 'reading'],
+  var before = new Date();
+  before.setDate(before.getDate()-91);
+  before.setHours(0);
+  before.setMinutes(0);
+  before.setSeconds(0);
+  
+  Readings.destroy({
     where: {
       timestamp: {
-        [Op.lte]: fromDate
+        [Op.lt]: before
       }
-    },
-    order: [
-      ['timestamp', 'DESC']
-    ]
+    }
   }).then((result) => {
     res.status(200).send(result).end();
-  })
-});*/
-
+  });
+});
 
 /*
 app.get('/import', (req, res) => {
