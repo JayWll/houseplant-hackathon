@@ -36,29 +36,18 @@ sequelize.authenticate()
       }
     });
   
-    setup();
+    Readings.sync();
   })
   .catch(function (err) {
     console.log('Unable to connect to the database: ', err);
   });
 
-// populate table with default users
-function setup(){
-  Readings.sync({force: true}).then(function() {
-    Readings.create({ timestamp: new Date(), reading: 30 });
-    console.log(Readings);
-  });  
-}
-
 // we've started you off with Express,
 // but feel free to use whatever libs or frameworks you'd like through `package.json`.
 
-// http://expressjs.com/en/starter/static-files.html
-app.use(express.static("public"));
-
 // http://expressjs.com/en/starter/basic-routing.html
-app.get("/", function(request, response) {
-  response.sendFile(__dirname + "/views/index.html");
+app.get("/", function(req, res) {
+  res.sendFile(__dirname + "/views/index.html");
 });
 
 app.get("/data", function (request, response) {
@@ -71,9 +60,13 @@ app.get("/data", function (request, response) {
   });
 });
 
-app.get("/newreading", function(request, response) {
-  Readings.create({ timestamp: new Date(), reading: 30 });
-  response.status(200).send('GlitchApp Success').end();
+// Handle requests to post a new reading
+app.get('/newreading', (req, res) => {
+  // Filter out requests that don't include the secret key, or don't contain the required data
+  if (req.query.s != process.env.SECRET || !RegExp('^\\d*$').test(req.query.v)) return res.status(400).send('Bad Request').end();
+  
+  Readings.create({ timestamp: new Date(), reading: req.query.v });
+  res.status(200).send('Reading received: ' + req.query.v).end();
 });
 
 // listen for requests :)
