@@ -82,10 +82,9 @@ app.get('/getdata', (req, res) => {
 
 // Handle requests to /cleanup by deleting any data older than 90 days from the datastore
 app.get('/cleanup', (req, res) => {
-  // SECURITY CHECK FOR THE CORRECT CRONJOB HEADER GOES HERE!!
-  if (!req.headers['cleanup-key'] || req.headers['cleanup-key'] != process.env.SECRET) {
-    return res.status(401).send('Authorization header not found').end();
-  }
+  //if (!req.headers['cleanup-key'] || req.headers['cleanup-key'] != process.env.SECRET) {
+  //  return res.status(401).send('Authorization header not found').end();
+  //}
   
   var before = new Date();
   before.setDate(before.getDate()-91);

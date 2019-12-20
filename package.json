@@ -2,18 +2,17 @@
   "//1": "describes your app and its dependencies",
   "//2": "https://docs.npmjs.com/files/package.json",
   "//3": "updating this file will download and update your packages",
-  "name": "hello-express",
-  "version": "0.0.1",
-  "description": "A simple Node app built on Express, instantly up and running.",
-  "main": "server.js",
+  "name": "jasonsplant",
+  "version": "1.0.0",
+  "description": "A Node app to collect moisture data from the plant I have on my desk in the office, and graph the results.",
+  "main": "app.js",
   "scripts": {
-    "start": "node server.js"
+    "start": "node app.js"
   },
   "dependencies": {
     "express": "^4.16.4",
-    "sqlite3": "*",
-    "sequelize": "*",
-    "request": "^2.88.0"
+    "sqlite": "^3.0.3",
+    "sequelize": "^6.0.0"
   },
   "engines": {
     "node": "10.x"
