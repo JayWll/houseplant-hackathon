@@ -12,7 +12,8 @@
   "dependencies": {
     "express": "^4.16.4",
     "sqlite3": "*",
-    "sequelize": "*"
+    "sequelize": "*",
+    "request": "^2.88.0"
   },
   "engines": {
     "node": "10.x"

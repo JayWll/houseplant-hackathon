@@ -4,6 +4,7 @@
 // init project
 var express = require('express');
 var Sequelize = require('sequelize');
+var request = require('request');
 var app = express();
 
 // setup a new database
@@ -68,6 +69,19 @@ app.get('/newreading', (req, res) => {
   Readings.create({ timestamp: new Date(), reading: req.query.v });
   res.status(200).send('Reading received: ' + req.query.v).end();
 });
+
+app.get('/import', (req, res) => {
+  request({ url: 'https://www.jasonsplant.ml/extract', json: true }, (error, {body}) => {
+    if (error) return;
+    else {      
+      body.foreach((item) => {
+        console.log(item)
+      })
+      
+      res.status(200).send(body).end();
+    }
+  })
+})
 
 // listen for requests :)
 const listener = app.listen(process.env.PORT, function() {

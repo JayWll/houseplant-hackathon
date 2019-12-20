@@ -1,5 +1,6 @@
 dependencies:
   express: 4.16.4
+  request: 2.88.0
   sequelize: 5.21.3
   sqlite3: 4.1.1
 packages:
@@ -1238,5 +1239,6 @@ shrinkwrapMinorVersion: 9
 shrinkwrapVersion: 3
 specifiers:
   express: ^4.16.4
+  request: ^2.88.0
   sequelize: '*'
   sqlite3: '*'
