@@ -127,12 +127,13 @@ app.get("/data", function (request, response) {
     response.send(result); // sends dbUsers back to the page
   });
 });
+*/
 
 app.get('/reset', (req, res) => {
   Readings.sync({ force: true });
   res.status(200).send('OK').end();
 })
-*/
+
 
 // listen for requests :)
 const listener = app.listen(process.env.PORT, function() {
