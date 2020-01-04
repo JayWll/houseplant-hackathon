@@ -5,9 +5,9 @@
   "name": "jasonsplant",
   "version": "1.0.0",
   "description": "A Node app to collect moisture data from the plant I have on my desk in the office, and graph the results.",
-  "main": "app.js",
+  "main": "nodeapp/app.js",
   "scripts": {
-    "start": "node app.js"
+    "start": "node nodeapp/app.js"
   },
   "dependencies": {
     "express": "^4.17.1",
