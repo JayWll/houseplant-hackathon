@@ -34,7 +34,7 @@ sequelize.authenticate()
         type: Sequelize.INTEGER
       }
     });
-  
+
     // Read data
     Readings.sync();
   })
@@ -51,7 +51,7 @@ app.get("/", function(req, res) {
 app.get('/newreading', (req, res) => {
   // Filter out requests that don't include the secret key, or don't contain the required data
   if (req.query.s != process.env.SECRET || !RegExp('^\\d*$').test(req.query.v)) return res.status(400).send('Bad Request').end();
-  
+
   Readings.create({ timestamp: new Date(), reading: req.query.v });
   res.status(200).send('Reading received: ' + req.query.v).end();
 });
@@ -64,7 +64,7 @@ app.get('/getdata', (req, res) => {
     res.status(400).send('Bad Request').end();
     return;
   }
-  
+
   Readings.findAll({
     attributes: ['timestamp', 'reading'],
     where: {
@@ -82,16 +82,16 @@ app.get('/getdata', (req, res) => {
 
 // Handle requests to /cleanup by deleting any data older than 90 days from the datastore
 app.get('/cleanup', (req, res) => {
-  //if (!req.headers['cleanup-key'] || req.headers['cleanup-key'] != process.env.SECRET) {
-  //  return res.status(401).send('Authorization header not found').end();
-  //}
-  
+  if (!req.headers['cleanup-key'] || req.headers['cleanup-key'] != process.env.SECRET) {
+    return res.status(401).send('Authorization header not found').end();
+  }
+
   var before = new Date();
   before.setDate(before.getDate()-91);
   before.setHours(0);
   before.setMinutes(0);
   before.setSeconds(0);
-  
+
   Readings.destroy({
     where: {
       timestamp: {
@@ -102,37 +102,6 @@ app.get('/cleanup', (req, res) => {
     res.status(200).send('Deleted rows: ' + numRows).end();
   });
 });
-
-/*
-app.get('/import', (req, res) => {
-  request({ url: 'https://www.jasonsplant.ml/extract', json: true }, (error, {body}) => {
-    if (error) return;
-    else {
-      var arr=[];
-      body.forEach((item) => {
-        Readings.create({ timestamp: new Date(item.timestamp), reading: item.reading });
-      })
-      
-      res.status(200).send('OK').end();
-    }
-  })
-})
-
-app.get("/data", function (request, response) {
-  var result = [];
-  Readings.findAll().then(function(reading) { // find all entries in the users tables
-    reading.forEach(function(reading) {
-      result.push([reading.timestamp, reading.reading]); // adds their info to the dbUsers value
-    });
-    response.send(result); // sends dbUsers back to the page
-  });
-});
-*/
-
-app.get('/reset', (req, res) => {
-  Readings.sync({ force: true });
-  res.status(200).send('OK').end();
-})
 
 
 // listen for requests :)
