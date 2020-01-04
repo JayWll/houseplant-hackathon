@@ -103,37 +103,6 @@ app.get('/cleanup', (req, res) => {
   });
 });
 
-/*
-app.get('/import', (req, res) => {
-  request({ url: 'https://www.jasonsplant.ml/extract', json: true }, (error, {body}) => {
-    if (error) return;
-    else {
-      var arr=[];
-      body.forEach((item) => {
-        Readings.create({ timestamp: new Date(item.timestamp), reading: item.reading });
-      })
-
-      res.status(200).send('OK').end();
-    }
-  })
-})
-
-app.get("/data", function (request, response) {
-  var result = [];
-  Readings.findAll().then(function(reading) { // find all entries in the users tables
-    reading.forEach(function(reading) {
-      result.push([reading.timestamp, reading.reading]); // adds their info to the dbUsers value
-    });
-    response.send(result); // sends dbUsers back to the page
-  });
-});
-*/
-
-app.get('/reset', (req, res) => {
-  Readings.sync({ force: true });
-  res.status(200).send('OK').end();
-})
-
 
 // listen for requests :)
 const listener = app.listen(process.env.PORT, function() {
