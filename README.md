@@ -26,5 +26,6 @@ Both the creation of a new reading and the cleanup cronjob expect that a secret 
 Links
 -----
 
+* [Live App](https://jasonsplant.glitch.me/)
 * [Glitch Project Page](https://glitch.com/~jasonsplant)
 * [GitHub Repo](https://github.com/JayWll/houseplant-hackathon)
