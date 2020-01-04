@@ -53,23 +53,6 @@ void loop() {
     std::unique_ptr<BearSSL::WiFiClientSecure>client(new BearSSL::WiFiClientSecure);
     client->setInsecure();
 
-    // Publish to GCP app
-    if (https.begin(*client, "https://houseplantcloud.appspot.com/newreading?s=" + String(gcp_app_secret) + "&v=" + String(reading))) {
-      int httpCode = https.GET();
-
-      if (httpCode > 0) {
-        if (httpCode == HTTP_CODE_OK || httpCode == HTTP_CODE_MOVED_PERMANENTLY) {
-          String payload = https.getString();
-          Serial.print("Response from server: ");
-          Serial.println(payload);
-        }
-      } else {
-        Serial.printf("Server connection failed: %s\n", https.errorToString(httpCode).c_str());
-      }
-    } else {
-      Serial.println("Server connection failed");
-    }
-
     // Publish to glitch app
     if (https.begin(*client, "https://jasonsplant.glitch.me/newreading?s=" + String(gcp_app_secret) + "&v=" + String(reading))) {
       int httpCode = https.GET();
