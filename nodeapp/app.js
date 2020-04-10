@@ -80,6 +80,18 @@ app.get('/getdata', (req, res) => {
   })
 });
 
+// Export all data for development
+app.get('/exportall', (req, res) => {
+  // Check that the expected key has been included with the web request
+  if (!req.headers['export-key'] || req.headers['export-key'] != process.env.SECRET) {
+    return res.status(401).send('Authorization header not found').end();
+  }
+  
+  Readings.findAll().then((result) => {
+    res.status(200).send(result).end();
+  })
+})
+
 // Handle requests to /cleanup by deleting any data older than 90 days from the datastore
 app.get('/cleanup', (req, res) => {
   if (!req.headers['cleanup-key'] || req.headers['cleanup-key'] != process.env.SECRET) {
