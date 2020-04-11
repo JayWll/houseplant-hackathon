@@ -1,5 +1,7 @@
 // Initialize project
 const db = require('./db/db')
+const path = require('path')
+require('dotenv').config({path: path.join(__dirname, '../.env')})
 const express = require('express');
 const app = express();
 
@@ -79,5 +81,6 @@ app.get('/cleanup', (req, res) => {
 
 // listen for requests :)
 const listener = app.listen(process.env.PORT || 4200, function() {
+  console.log(process.env.DB_USER)
   console.log("Your app is listening on port " + listener.address().port);
 });

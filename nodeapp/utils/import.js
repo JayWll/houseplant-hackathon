@@ -1,7 +1,7 @@
 const db = require('../db/db')
 const request = require('request')
 const path = require('path')
-const dotenv = require('dotenv').config({path: path.join(__dirname, '../../.env')})
+require('dotenv').config({path: path.join(__dirname, '../../.env')})
 
 // The URL from which to export production data
 const url = 'https://jasonsplant.glitch.me/exportall'
