@@ -10,9 +10,10 @@
     "start": "node nodeapp/app.js"
   },
   "dependencies": {
+    "dotenv": "^8.2.0",
     "express": "^4.17.1",
-    "sqlite3": "*",
-    "sequelize": "*"
+    "sequelize": "*",
+    "sqlite3": "*"
   },
   "engines": {
     "node": "10.x"
