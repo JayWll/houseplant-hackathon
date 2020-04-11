@@ -4,6 +4,7 @@ const Op = Sequelize.Op
 // Setup database, using credentials set in .env
 const sequelize = new Sequelize('database', process.env.DB_USER, process.env.DB_PASS, {
   dialect: 'sqlite',
+  logging: false,
   storage: '.data/database.sqlite'
 });
 
