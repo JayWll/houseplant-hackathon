@@ -13,14 +13,15 @@ request({
     'export-key': process.env.SECRET
   },
   json: true
-}, (error, {body}) => {
+}, async(error, response) => {
   if (error) return console.log(error)
+  if (response.statusCode != 200) return console.log('Unsuccessful, as indicated by HTTP status')
 
-  console.log(body.length + ' items retrieved')
+  console.log(response.body.length + ' items retrieved')
 
   // Remove existing database items
-  db.Readings.destroy({truncate: true})
+  await db.Readings.destroy({truncate: true})
 
   // Add new data to the database
-  db.Readings.bulkCreate(body)
+  await db.Readings.bulkCreate(response.body)
 });
