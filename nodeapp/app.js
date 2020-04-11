@@ -86,7 +86,7 @@ app.get('/exportall', (req, res) => {
   if (!req.headers['export-key'] || req.headers['export-key'] != process.env.SECRET) {
     return res.status(401).send('Authorization header not found').end();
   }
-  
+
   Readings.findAll().then((result) => {
     res.status(200).send(result).end();
   })
@@ -117,6 +117,6 @@ app.get('/cleanup', (req, res) => {
 
 
 // listen for requests :)
-const listener = app.listen(process.env.PORT, function() {
+const listener = app.listen(process.env.PORT || 4200, function() {
   console.log("Your app is listening on port " + listener.address().port);
 });
