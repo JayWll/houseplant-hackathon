@@ -1,37 +1,7 @@
 // Initialize project
+const db = require('./db/db')
 const express = require('express');
-const Sequelize = require('sequelize');
-const Op = Sequelize.Op
 const app = express();
-
-// Setup database, using credentials set in .env
-var sequelize = new Sequelize('database', process.env.DB_USER, process.env.DB_PASS, {
-  dialect: 'sqlite',
-  storage: '.data/database.sqlite'
-});
-var Readings;
-
-// Authenticate with the database
-sequelize.authenticate()
-  .then(function(err) {
-    console.log('Connection has been established successfully.');
-
-    // Define 'readings' table structure
-    Readings = sequelize.define('readings', {
-      timestamp: {
-        type: Sequelize.DATE
-      },
-      reading: {
-        type: Sequelize.INTEGER
-      }
-    });
-
-    // Read data
-    Readings.sync();
-  })
-  .catch(function (err) {
-    console.log('Unable to connect to the database: ', err);
-  });
 
 // Handle requests for the root page by serving the static index.html from the views folder
 app.get("/", function(req, res) {
@@ -56,11 +26,11 @@ app.get('/getdata', (req, res) => {
     return;
   }
 
-  Readings.findAll({
+  db.Readings.findAll({
     attributes: ['timestamp', 'reading'],
     where: {
       timestamp: {
-        [Op.between]: [new Date(req.query.from), new Date(req.query.to)]
+        [db.Op.between]: [new Date(req.query.from), new Date(req.query.to)]
       }
     },
     order: [
@@ -98,7 +68,7 @@ app.get('/cleanup', (req, res) => {
   Readings.destroy({
     where: {
       timestamp: {
-        [Op.lt]: before
+        [db.Op.lt]: before
       }
     }
   }).then((numRows) => {
