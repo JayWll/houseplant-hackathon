@@ -17,6 +17,35 @@ app.get('/newreading', (req, res) => {
 
   db.Readings.create({ timestamp: new Date(), reading: req.query.v });
   res.status(200).send('Reading received: ' + req.query.v).end();
+
+  // Fetch all settings
+  db.Settings.findAll().then((result) => {
+    // Reset low moisture flag if it's set, and the reading is greater than high-trigger
+    if (result.find(o => o.dataValues.key === 'low').dataValues.value !== '0' && req.query.v >= parseInt(result.find(o => o.dataValues.key === 'high-trigger').dataValues.value)) {
+      // Update low to false
+      db.Settings.update({ value: false }, { where: { key: 'low' } })
+      // Update alert to false
+      db.Settings.update({ value: false }, { where: { key: 'alert' } })
+    }
+
+    // Set the low moisture flag if it's not set, and the value is less than low-trigger
+    if (result.find(o => o.dataValues.key === 'low').dataValues.value === '0' && req.query.v <= parseInt(result.find(o => o.dataValues.key === 'low-trigger').dataValues.value)) {
+      // Update low to true
+      db.Settings.update({ value: new Date().toISOString() }, { where: { key: 'low' } })
+    }
+
+    // If the low moisture flag is set but an alert has not yet been sent, determine if an alert is necessarry
+    if (result.find(o => o.dataValues.key === 'low').dataValues.value !== '0' && result.find(o => o.dataValues.key === 'alert').dataValues.value === '0') {
+      const lowtriggered = new Date().getTime() - new Date(result.find(o => o.dataValues.key === 'low').dataValues.value).getTime()
+      const fivedays = 5 * 24 * 60 * 60 * 1000
+
+      // If the first low reading was more than 5 days ago, send an alert
+      if (lowtriggered > fivedays) {
+        console.log('More than 5 days!') // NEED TO REPLACE THIS WITH ALERT BEING SENT
+        db.Settings.update({ value: new Date().toISOString() }, { where: { key: 'alert' } })
+      }
+    }
+  })
 });
 
 // Handle requests for /getdata by returning a JSON object of data for the relevant time period
