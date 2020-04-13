@@ -19,6 +19,9 @@ request({
 
   console.log(response.body.length + ' items retrieved')
 
+  // Sync the database table
+  await db.Settings.sync()
+
   // Remove existing database items
   await db.Readings.destroy({truncate: true})
 
