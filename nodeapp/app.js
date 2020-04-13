@@ -72,7 +72,7 @@ app.get('/getdata', (req, res) => {
   })
 });
 
-// Export all data for development
+// Handle requests for /exportall by retrieving all data and returning a JSON object
 app.get('/exportall', (req, res) => {
   // Check that the expected key has been included with the web request
   if (!req.headers['export-key'] || req.headers['export-key'] != process.env.SECRET) {
@@ -80,6 +80,13 @@ app.get('/exportall', (req, res) => {
   }
 
   db.Readings.findAll().then((result) => {
+    res.status(200).send(result).end();
+  })
+})
+
+// Handle requests for /showsettings by retrieving all settings from the database and returning a JSON object
+app.get('/showsettings', (req, res) => {
+  db.Settings.findAll().then((result) => {
     res.status(200).send(result).end();
   })
 })
