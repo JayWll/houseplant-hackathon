@@ -1,6 +1,7 @@
 // Initialize project
 const db = require('./db/db')
 const path = require('path')
+const twit = require('twit')
 require('dotenv').config({path: path.join(__dirname, '../.env')})
 const express = require('express');
 const app = express();
@@ -22,6 +23,16 @@ app.get('/newreading', (req, res) => {
   db.Settings.findAll().then((result) => {
     // Reset low moisture flag if it's set, and the reading is greater than high-trigger
     if (result.find(o => o.dataValues.key === 'low').dataValues.value !== '0' && req.query.v >= parseInt(result.find(o => o.dataValues.key === 'high-trigger').dataValues.value)) {
+      // Post a tweet about being watered
+      const msg = new twit({
+        consumer_key: process.env.CONSUMER_KEY,
+        consumer_secret: process.env.CONSUMER_SECRET,
+        access_token: process.env.ACCESS_TOKEN,
+        access_token_secret: process.env.ACCESS_TOKEN_SECRET
+      })
+
+      msg.post('statuses/update', { status: 'Thanks to whoever watered me just now!! So moist.' })
+
       // Update low to false
       db.Settings.update({ value: false }, { where: { key: 'low' } })
       // Update alert to false
@@ -37,14 +48,34 @@ app.get('/newreading', (req, res) => {
     // If the low moisture flag is set but an alert has not yet been sent, determine if an alert is necessarry
     if (result.find(o => o.dataValues.key === 'low').dataValues.value !== '0' && result.find(o => o.dataValues.key === 'alert').dataValues.value === '0') {
       const lowtriggered = new Date().getTime() - new Date(result.find(o => o.dataValues.key === 'low').dataValues.value).getTime()
-      const fivedays = 5 * 24 * 60 * 60 * 1000
+      const fivedays = 2 * 24 * 60 * 60 * 1000
 
       // If the first low reading was more than 5 days ago, send an alert
       if (lowtriggered > fivedays) {
-        console.log('More than 5 days!') // NEED TO REPLACE THIS WITH ALERT BEING SENT
+        // Pick a random message from the array below
+        const tweet = [
+          'I\'m getting pretty thirsty over here, @JayWll',
+          'So. Very. Dry. You know I\'m a succulent not a cactus, right @JayWll? 🌵',
+          'Hey @JayWll, water me. 🥛',
+          'They say a man shall not live by bread alone, and a succulent won\'t live if you don\'t WATER ME @JAYWLL!!1! 🍞🚰💦',
+          '@JayWll seriously bro. A little water. That\'s all I ask.'
+        ]
+
+        // Define options for the twitter API
+        const msg = new twit({
+          consumer_key: process.env.CONSUMER_KEY,
+          consumer_secret: process.env.CONSUMER_SECRET,
+          access_token: process.env.ACCESS_TOKEN,
+          access_token_secret: process.env.ACCESS_TOKEN_SECRET
+        })
+
+        // Post a tweet
+        msg.post('statuses/update', { status: tweet[Math.floor(Math.random() * tweet.length)] })
+
+        // Flag that an alert has been sent
         db.Settings.update({ value: new Date().toISOString() }, { where: { key: 'alert' } })
-      }
-    }
+      } else console.log('Low for less than 5 days')
+    } else console.log('No message needed')
   })
 });
 
