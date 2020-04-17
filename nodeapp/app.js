@@ -48,7 +48,7 @@ app.get('/newreading', (req, res) => {
     // If the low moisture flag is set but an alert has not yet been sent, determine if an alert is necessarry
     if (result.find(o => o.dataValues.key === 'low').dataValues.value !== '0' && result.find(o => o.dataValues.key === 'alert').dataValues.value === '0') {
       const lowtriggered = new Date().getTime() - new Date(result.find(o => o.dataValues.key === 'low').dataValues.value).getTime()
-      const fivedays = 2 * 24 * 60 * 60 * 1000
+      const fivedays = 5 * 24 * 60 * 60 * 1000
 
       // If the first low reading was more than 5 days ago, send an alert
       if (lowtriggered > fivedays) {
