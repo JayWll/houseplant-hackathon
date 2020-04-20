@@ -23,7 +23,14 @@ app.get('/newreading', (req, res) => {
   db.Settings.findAll().then((result) => {
     // Reset low moisture flag if it's set, and the reading is greater than high-trigger
     if (result.find(o => o.dataValues.key === 'low').dataValues.value !== '0' && req.query.v >= parseInt(result.find(o => o.dataValues.key === 'high-trigger').dataValues.value)) {
-      // Post a tweet about being watered
+      // Pick a random message from the array below
+      const tweet = [
+        'Thanks to whoever watered me just now!! So moist.',
+        'So refreshing! Thank you, mysterious stranger, for the life-giving sustenance.',
+        'Whoever watered me (I\'m kind of guessing it was you, @Katheryn_mur), know that I appreciate it!'
+      ]
+
+      // Define options for the twitter API
       const msg = new twit({
         consumer_key: process.env.CONSUMER_KEY,
         consumer_secret: process.env.CONSUMER_SECRET,
@@ -31,7 +38,7 @@ app.get('/newreading', (req, res) => {
         access_token_secret: process.env.ACCESS_TOKEN_SECRET
       })
 
-      msg.post('statuses/update', { status: 'Thanks to whoever watered me just now!! So moist.' })
+      msg.post('statuses/update', { status: tweet[Math.floor(Math.random() * tweet.length)] })
 
       // Update low to false
       db.Settings.update({ value: false }, { where: { key: 'low' } })
