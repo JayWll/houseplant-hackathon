@@ -26,7 +26,7 @@ app.get('/newreading', (req, res) => {
       // Pick a random message from the array below
       const tweet = [
         'Thanks to whoever watered me just now!! So moist.',
-        'So refreshing! Thank you, mysterious stranger, for the life-giving sustenance.',
+        'So refreshing! Thank you, mysterious stranger, for the life-giving liquidy sustenance.',
         'Whoever watered me (I\'m kind of guessing it was you, @Katheryn_mur), know that I appreciate it!'
       ]
 
