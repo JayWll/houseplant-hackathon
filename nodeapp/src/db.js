@@ -22,14 +22,14 @@ const Readings = sequelize.define('readings', {
     afterCreate: (data, opts) => {
       // Fetch all settings
       Settings.findAll().then((result) => {
-        const low-trigger = parseInt(result.find(o => o.dataValues.key === 'low-trigger').dataValues.value)
-        const high-trigger = parseInt(result.find(o => o.dataValues.key === 'high-trigger').dataValues.value)
+        const lowtrigger = parseInt(result.find(o => o.dataValues.key === 'low-trigger').dataValues.value)
+        const hightrigger = parseInt(result.find(o => o.dataValues.key === 'high-trigger').dataValues.value)
         const low = result.find(o => o.dataValues.key === 'low-trigger').dataValues.value
         const alert = result.find(o => o.dataValues.key === 'low-trigger').dataValues.value
 
 
         // Reset low moisture flag if it's set, and the reading is greater than high-trigger
-        if (low !== '0' && data.reading >= high-trigger)) {
+        if (low !== '0' && data.reading >= hightrigger) {
           // Send alert that water was received
           alert('gotwater')
 
@@ -41,7 +41,7 @@ const Readings = sequelize.define('readings', {
         }
 
         // Set the low moisture flag if it's not set, and the value is less than low-trigger
-        if (low === '0' && data.reading <= low-trigger)) {
+        if (low === '0' && data.reading <= lowtrigger) {
           // Update low to true
           Settings.update({ value: new Date().toISOString() }, { where: { key: 'low' } })
         }
