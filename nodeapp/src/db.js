@@ -1,6 +1,6 @@
 const Sequelize = require('sequelize')
 const Op = Sequelize.Op
-const alert = require('./alert')
+const message = require('./alert')
 
 // Setup database, using credentials set in .env
 const sequelize = new Sequelize('database', process.env.DB_USER, process.env.DB_PASS, {
@@ -24,14 +24,14 @@ const Readings = sequelize.define('readings', {
       Settings.findAll().then((result) => {
         const lowtrigger = parseInt(result.find(o => o.dataValues.key === 'low-trigger').dataValues.value)
         const hightrigger = parseInt(result.find(o => o.dataValues.key === 'high-trigger').dataValues.value)
-        const low = result.find(o => o.dataValues.key === 'low-trigger').dataValues.value
+        const low = result.find(o => o.dataValues.key === 'low').dataValues.value
         const alert = result.find(o => o.dataValues.key === 'low-trigger').dataValues.value
 
 
         // Reset low moisture flag if it's set, and the reading is greater than high-trigger
         if (low !== '0' && data.reading >= hightrigger) {
           // Send alert that water was received
-          alert('gotwater')
+          message('gotwater')
 
           // Update low to false
           Settings.update({ value: false }, { where: { key: 'low' } })
@@ -54,12 +54,12 @@ const Readings = sequelize.define('readings', {
           // If the first low reading was more than 4 days ago, send an alert
           if (lowtriggered > fourdays) {
             // Send alert that water is needed
-            alert('needwater')
+            message('needwater')
 
             // Flag that an alert has been sent
             Settings.update({ value: new Date().toISOString() }, { where: { key: 'alert' } })
-          } else console.log('Low for less than 4 days')
-        } else console.log('No message needed')
+          }
+        }
       })
     }
   }

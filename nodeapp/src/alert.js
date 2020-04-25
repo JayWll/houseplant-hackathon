@@ -4,7 +4,7 @@ require('dotenv').config({path: path.join(__dirname, '../../.env')})
 
 const alert = (type) => {
   console.log('Alert triggered for type: ' + type)
-  const tweet = false
+  var tweet = false
 
   switch(type) {
     // Water is needed
@@ -42,8 +42,7 @@ const alert = (type) => {
   })
 
   // Post tweet
-  //msg.post('statuses/update', { status: tweet[Math.floor(Math.random() * tweet.length)] })
-  console.log(tweet[Math.floor(Math.random() * tweet.length)])
+  msg.post('statuses/update', { status: tweet[Math.floor(Math.random() * tweet.length)] })
 }
 
 module.exports = alert
