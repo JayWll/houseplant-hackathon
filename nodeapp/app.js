@@ -57,6 +57,11 @@ app.get('/exportall', (req, res) => {
 
 // Handle requests for /showsettings by retrieving all settings from the database and returning a JSON object
 app.get('/showsettings', (req, res) => {
+  // Check that the expected key has been included with the web request
+  if (!req.headers['export-key'] || req.headers['export-key'] != process.env.SECRET) {
+    return res.status(401).send('Authorization header not found').end();
+  }
+
   db.Settings.findAll().then((result) => {
     res.status(200).send(result).end();
   })
