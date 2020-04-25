@@ -1,4 +1,4 @@
-const db = require('../db/db')
+const db = require('../src/db')
 const path = require('path')
 require('dotenv').config({path: path.join(__dirname, '../../.env')})
 
