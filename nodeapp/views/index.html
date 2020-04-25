@@ -78,7 +78,7 @@
             legend: {display: false},
             scales: {
               xAxes: [{type: 'time', time: {unit: 'day', min: fromdate, max: todate}, scaleLabel: {display: true, labelString: 'Date', fontColor: '#999999'}, gridLines: {color: '#CCCCCC'}, ticks: {fontColor: '#666666'}}],
-              yAxes: [{gridLines: {color: '#CCCCCC'}, ticks: {beginAtZero: true, max: 1200, fontColor: '#666666'}}]
+              yAxes: [{gridLines: {color: '#CCCCCC'}, ticks: {beginAtZero: true, max: 100, fontColor: '#666666'}}]
             },
             maintainAspectRatio: false
           }
@@ -113,7 +113,7 @@
       $.getJSON('/getdata?from=' + from.toISOString() + '&to=' + to.toISOString(), function(j) {
         $(j).each(function() {
           this.x = new Date(this.timestamp);
-          this.y = this.reading;
+          this.y = this.reading / 1024 * 100;
           delete this.timestamp;
           delete this.reading;
         });
