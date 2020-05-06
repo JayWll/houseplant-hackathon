@@ -10,7 +10,7 @@ const alert = (type) => {
     case 'wantwater':
       tweet = [
         'I\'m getting pretty thirsty over here, @JayWll',
-        'So. Very. Dry. You know I\'m a succulent not a cactus, right @JayWll? 🌵',
+        'So. Very. Dry. You know I\'m not a cactus, right @JayWll? 🌵',
         'Hey @JayWll, water me. 🥛',
         'They say a man shall not live by bread alone, and a succulent won\'t live if you don\'t WATER ME @JAYWLL!!1! 🍞🚰💦',
         '@JayWll seriously bro. A little water. That\'s all I ask.'
