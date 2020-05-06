@@ -54,7 +54,7 @@ const Readings = sequelize.define('readings', {
           // If the first low reading was more than 4 days ago, send an alert
           if (lowtriggered > fourdays) {
             // Send alert that water is needed
-            message('needwater')
+            message('wantwater')
 
             // Flag that an alert has been sent
             Settings.update({ value: new Date().toISOString() }, { where: { key: 'alert' } })
