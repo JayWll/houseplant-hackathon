@@ -7,10 +7,10 @@ const app = express();
 
 // Handle requests for the root page by serving the static index.html from the views folder
 app.get("/", function(req, res) {
-  if (!req.headers['x-real-host'] && req.headers.host.includes('glitch.me')) {
+  if (req.headers.host.includes('glitch.me')) {
     return res.redirect('https://www.jasonsplant.ml' + req.url);
   }
-  
+
   res.sendFile(__dirname + "/views/index.html");
 });
 
