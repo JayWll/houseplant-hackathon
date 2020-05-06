@@ -3,7 +3,6 @@ const twit = require('twit')
 require('dotenv').config({path: path.join(__dirname, '../../.env')})
 
 const alert = (type) => {
-  console.log('Alert triggered for type: ' + type)
   var tweet = false
 
   switch(type) {
