@@ -25,7 +25,7 @@ const Readings = sequelize.define('readings', {
         const lowtrigger = parseInt(result.find(o => o.dataValues.key === 'low-trigger').dataValues.value)
         const hightrigger = parseInt(result.find(o => o.dataValues.key === 'high-trigger').dataValues.value)
         const low = result.find(o => o.dataValues.key === 'low').dataValues.value
-        const alert = result.find(o => o.dataValues.key === 'low-trigger').dataValues.value
+        const alert = result.find(o => o.dataValues.key === 'alert').dataValues.value
 
 
         // Reset low moisture flag if it's set, and the reading is greater than high-trigger
